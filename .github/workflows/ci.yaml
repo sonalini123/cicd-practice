@@ -29,9 +29,9 @@ jobs:
                  MY_SECRET: ${{ secrets.MY_SECRET }}
                run: echo "the secret is $MY-SECRET"  
                
- build:
-    runs on: ubuntu-latest
-    steps:
+  build:
+     runs-on: ubuntu-latest
+     steps:
              - name: Checkout code
                uses: actions/checkout@v4
 
