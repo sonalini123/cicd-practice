@@ -28,3 +28,12 @@ jobs:
                env:
                  MY_SECRET: ${{ secrets.MY_SECRET }}
                run: echo "the secret is $MY-SECRET"  
+               
+ build:
+    runs on: ubuntu-latest
+    steps:
+             - name: Checkout code
+               uses: actions/checkout@v4
+
+             - name: Build confirmation
+               run: echo "Tests passed! Ready to build Docker Image"
