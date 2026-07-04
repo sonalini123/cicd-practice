@@ -65,7 +65,7 @@ jobs:
      environment: development
      steps:
        - name: Deploy to dev
-         run: echo"Deploying  $APP_NAME to development"  
+         run: echo "Deploying  $APP_NAME to development"  
 
   deploy-staging:
      runs-on: ubuntu-latest
@@ -73,7 +73,7 @@ jobs:
      environment: staging
      steps:
        - name: Deploy to stage
-         run: echo"Deploying  $APP_NAME to sttaging"   
+         run: echo "Deploying  $APP_NAME to sttaging"   
  
   deploy-prod:
      runs-on: ubuntu-latest
@@ -81,6 +81,6 @@ jobs:
      environment: production
      steps:
        - name: Deploy to production
-         run: echo"Deploying  $APP_NAME to production"  
+         run: echo "Deploying  $APP_NAME to production"  
    
          
