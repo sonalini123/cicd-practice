@@ -36,7 +36,14 @@ jobs:
                run: pip install -r requirements.txt
 
              - name: Run Tests
-               run: pytest  
+               run: pytest --junitxml=test-report.xml
+               
+
+             - name: Upload test Report
+               uses: actions/uploadartifacts@v3
+               with:
+                  name: test-results-${{ matrix.python-version }}
+                  path: test-report.xml
 
              - name: Use Secret
                env:
