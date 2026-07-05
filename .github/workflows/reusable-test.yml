@@ -26,9 +26,9 @@ jobs:
       - name: Run tests
         run: pytest
 
-      -name: Run Trivy Scan
-      uses:    aquasecurity/trivy-action@master
-      with:
+      - name: Run Trivy Scan
+        uses: aquasecurity/trivy-action@master
+        with:
           scan-type: 'fs'
           scan-ref: '.'
           severity: 'HIGH,CRITICAL'
