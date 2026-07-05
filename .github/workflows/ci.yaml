@@ -5,82 +5,49 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+
 env:
   APP_NAME: cicd-practice
-  PYTHON_VERSION_DEFAULT: '3.11'
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ['3.9', '3.10', '3.11']
-    steps:
-             - name: Checkout code 
-               uses: actions/checkout@v4
+  call-tests:
+    uses: ./.github/workflows/reusable-test.yml
+    with:
+      python-version: '3.11'
 
-             - name: Set up Python
-               uses: actions/setup-python@v5
-               with:
-                python-version: ${{ matrix.python-version }}
-
-             - name: Cache pip dependencies
-               uses: actions/cache@v3
-               with:
-                  path: ~/.cache/pip
-                  key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
-                  restore-keys: |
-                    ${{ runner.os }}-pip-
-
-             - name: Install dependencies 
-               run: pip install -r requirements.txt
-
-             - name: Run Tests
-               run: pytest --junitxml=test-report.xml
-               
-
-             - name: Upload test Report
-               uses: actions/upload-artifact@v7
-               with:
-                  name: test-results-${{ matrix.python-version }}
-                  path: test-report.xml
-
-             - name: Use Secret
-               env:
-                 MY_SECRET: ${{ secrets.MY_SECRET }}
-               run: echo "the secret is $MY-SECRET"  
-               
   build:
-     runs-on: ubuntu-latest
-     steps:
-             - name: Checkout code
-               uses: actions/checkout@v4
-
-             - name: Build confirmation
-               run: echo "Tests passed! Ready to build Docker Image"
+    runs-on: ubuntu-latest
+    needs: call-tests
+    if: github.event_name == 'push'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Build confirmation
+        run: echo "Building $APP_NAME!"
 
   deploy-dev:
-     runs-on: ubuntu-latest
-     needs: build
-     environment: development
-     steps:
-       - name: Deploy to dev
-         run: echo "Deploying  $APP_NAME to development"  
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.event_name == 'push'
+    environment: development
+    steps:
+      - name: Deploy to dev
+        run: echo "Deploying $APP_NAME to development!"
 
   deploy-staging:
-     runs-on: ubuntu-latest
-     needs: deploy-dev
-     environment: staging
-     steps:
-       - name: Deploy to stage
-         run: echo "Deploying  $APP_NAME to sttaging"   
- 
+    runs-on: ubuntu-latest
+    needs: deploy-dev
+    if: github.event_name == 'push'
+    environment: staging
+    steps:
+      - name: Deploy to staging
+        run: echo "Deploying $APP_NAME to staging!"
+
   deploy-prod:
-     runs-on: ubuntu-latest
-     needs: deploy-staging
-     environment: production
-     steps:
-       - name: Deploy to production
-         run: echo "Deploying  $APP_NAME to production"  
-   
-         
+    runs-on: ubuntu-latest
+    needs: deploy-staging
+    if: github.event_name == 'push'
+    environment: production
+    steps:
+      - name: Deploy to production
+        run: echo "Deploying $APP_NAME to production!"
